@@ -1,0 +1,14 @@
+{
+  "servers": {
+    "empi-mcp": {
+      "command": "/home/zeinab/Documents/CSI_main/Tasks/MCP/MCP/.venv/bin/python3",
+      "args": ["fast_mcp_server.py"],
+      "cwd": "/home/zeinab/Documents/CSI_main/Tasks/MCP/MCP",
+      "env": {
+        "API_BASE_URL": "http://localhost:80",
+        "OPENAPI_PATH": "/v3/api-docs",
+        "SERVER_NAME": "empi-openapi-mcp"
+      }
+    }
+  }
+}
