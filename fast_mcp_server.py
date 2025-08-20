@@ -15,6 +15,10 @@ CONTEXT_PATH = os.getenv("CONTEXT_PATH", "")
 OPENAPI_FULL_URL = os.getenv("OPENAPI_FULL_URL", "")
 OPENAPI_PATH = os.getenv("OPENAPI_PATH", "/v3/api-docs")
 SERVER_NAME = os.getenv("SERVER_NAME", "fast_mcp_server")
+# Optional default group header value for downstream APIs that require x-group
+DEFAULT_X_GROUP = os.getenv("DEFAULT_X_GROUP", os.getenv("X_GROUP", ""))
+# Optional default hospital header value for downstream APIs that require x-hospital
+DEFAULT_X_HOSPITAL = os.getenv("DEFAULT_X_HOSPITAL", os.getenv("X_HOSPITAL", ""))
 # Runtime-resolved context path (may be auto-detected). Defaults to CONTEXT_PATH
 CONTEXT_PATH_RUNTIME = CONTEXT_PATH
 # Resolved OpenAPI URL after successful fetch (for logging)
@@ -24,7 +28,9 @@ RESOLVED_OPENAPI_URL = ""
 server = Server(SERVER_NAME)
 
 
-async def make_api_request(method: str, endpoint: str, data: dict = None) -> dict:
+from typing import Optional
+
+async def make_api_request(method: str, endpoint: str, data: dict = None, headers: Optional[Dict[str, str]] = None) -> dict:
     """Make HTTP request to the configured API base URL"""
     base = API_BASE_URL.rstrip('/')
     ctx = CONTEXT_PATH_RUNTIME.strip('/').strip()
@@ -37,7 +43,7 @@ async def make_api_request(method: str, endpoint: str, data: dict = None) -> dic
     try:
         async with aiohttp.ClientSession() as session:
             if method.upper() == "GET":
-                async with session.get(url) as response:
+                async with session.get(url, headers=headers or {}) as response:
                     if response.status == 404:
                         return {"error": f"Not found: {await response.text()}"}
                     response.raise_for_status()
@@ -50,7 +56,7 @@ async def make_api_request(method: str, endpoint: str, data: dict = None) -> dic
                         return {"text": await response.text(), "status_code": response.status}
 
             elif method.upper() == "POST":
-                async with session.post(url, json=data) as response:
+                async with session.post(url, json=data, headers=headers or {}) as response:
                     response.raise_for_status()
                     if response.status == 204:
                         return {"status": "no_content", "status_code": 204}
@@ -60,7 +66,7 @@ async def make_api_request(method: str, endpoint: str, data: dict = None) -> dic
                         return {"text": await response.text(), "status_code": response.status}
 
             elif method.upper() == "PUT":
-                async with session.put(url, json=data) as response:
+                async with session.put(url, json=data, headers=headers or {}) as response:
                     if response.status == 404:
                         return {"error": f"Not found: {await response.text()}"}
                     response.raise_for_status()
@@ -72,7 +78,7 @@ async def make_api_request(method: str, endpoint: str, data: dict = None) -> dic
                         return {"text": await response.text(), "status_code": response.status}
 
             elif method.upper() == "DELETE":
-                async with session.delete(url) as response:
+                async with session.delete(url, headers=headers or {}) as response:
                     if response.status == 404:
                         return {"error": f"Not found: {await response.text()}"}
                     response.raise_for_status()
@@ -170,8 +176,10 @@ def openapi_to_tools(openapi_spec: dict) -> List[Tool]:
             parameters = details.get("parameters", [])
             request_body = details.get("requestBody", {})
             input_schema = {"type": "object", "properties": {}, "required": []}
-            # Parameters in path/query
+            # Parameters in path/query (skip headers, they can be auto-injected)
             for param in parameters:
+                if param.get("in") not in {"path", "query"}:
+                    continue
                 pname = param["name"]
                 pdesc = param.get("description", "")
                 ptype = param.get("schema", {}).get("type", "string")
@@ -221,17 +229,45 @@ async def ensure_openapi_loaded():
 # Utility to build request from operation details and arguments
 def build_request_from_operation(method, path, details, arguments):
     # Substitute path parameters
+    from urllib.parse import quote as _urlquote
     for param in details.get("parameters", []):
         if param.get("in") == "path":
             pname = param["name"]
             if pname not in arguments:
                 raise ValueError(f"Missing required path parameter: {pname}")
-            path = path.replace(f"{{{pname}}}", str(arguments[pname]))
+            encoded_val = _urlquote(str(arguments[pname]), safe="")
+            path = path.replace(f"{{{pname}}}", encoded_val)
     # Query params
     query_params = {}
+    # Headers
+    headers = {}
+    # Prepare case-insensitive lookup for provided args (hyphen vs underscore)
+    arg_keys = {k.lower(): k for k in arguments.keys()}
     for param in details.get("parameters", []):
-        if param.get("in") == "query" and param["name"] in arguments:
-            query_params[param["name"]] = arguments[param["name"]]
+        loc = param.get("in")
+        pname = param["name"]
+        if loc == "query" and pname in arguments:
+            query_params[pname] = arguments[pname]
+        elif loc == "header":
+            # Accept both 'x-group' and 'x_group' forms
+            lname = pname.lower()
+            provided_key = None
+            if pname in arguments:
+                provided_key = pname
+            elif lname in arg_keys:
+                provided_key = arg_keys[lname]
+            elif lname.replace("-", "_") in arg_keys:
+                provided_key = arg_keys[lname.replace("-", "_")]
+            if provided_key is not None:
+                headers[pname] = str(arguments[provided_key])
+            else:
+                # Inject default for x-group if configured
+                if lname == "x-group" and DEFAULT_X_GROUP:
+                    headers[pname] = DEFAULT_X_GROUP
+                # Inject default for x-hospital if configured
+                if lname == "x-hospital" and DEFAULT_X_HOSPITAL:
+                    headers[pname] = DEFAULT_X_HOSPITAL
+                # Otherwise, leave it out; backend may apply its own default
     # Body
     body = None
     if details.get("requestBody"):
@@ -244,7 +280,7 @@ def build_request_from_operation(method, path, details, arguments):
     if query_params:
         from urllib.parse import urlencode
         path = f"{path}?{urlencode(query_params)}"
-    return method, path, body
+    return method, path, body, headers
 
 
 @server.list_tools()
@@ -275,10 +311,16 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
             return [TextContent(type="text", text=f"Unknown tool: {name}")]
         method, path, details = operation_map[name]
         try:
-            http_method, endpoint, body = build_request_from_operation(method, path, details, arguments)
+            http_method, endpoint, body, headers = build_request_from_operation(method, path, details, arguments)
         except Exception as e:
             return [TextContent(type="text", text=f"Error building request: {str(e)}")]
-        result = await make_api_request(http_method, endpoint, body)
+        # Ensure x-group default header is applied if not already set by operation headers
+        if DEFAULT_X_GROUP and ("x-group" not in headers and "X-Group" not in headers):
+            headers["x-group"] = DEFAULT_X_GROUP
+        # Ensure x-hospital default header is applied if not already set by operation headers
+        if DEFAULT_X_HOSPITAL and ("x-hospital" not in headers and "X-Hospital" not in headers):
+            headers["x-hospital"] = DEFAULT_X_HOSPITAL
+        result = await make_api_request(http_method, endpoint, body, headers)
         if "error" in result:
             return [TextContent(type="text", text=f"Error: {result['error']}")]
         pretty = json.dumps(result, indent=2, ensure_ascii=False)

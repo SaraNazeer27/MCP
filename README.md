@@ -14,6 +14,8 @@ Set the following environment variables when launching the MCP server:
 - CONTEXT_PATH: Optional. If your service runs under a servlet context-path, set it here (e.g., /csi-api/empi-api/api). It will be prefixed before OPENAPI_PATH when fetching the spec.
 - OPENAPI_FULL_URL: Optional. If set, this full URL will be used directly to fetch the OpenAPI spec (overrides the previous two). Example: http://localhost:3008/csi-api/empi-api/api/v3/api-docs
 - SERVER_NAME: Optional. Name to display for the MCP server. Default: fast_mcp_server
+- DEFAULT_X_GROUP or X_GROUP: Optional. If your EMPI API requires the x-group header, set a default here. The MCP server will inject this header on every request unless explicitly provided in a tool call.
+- DEFAULT_X_HOSPITAL or X_HOSPITAL: Optional. If your API requires the x-hospital header, set a default here. The MCP server will inject this header on every request unless explicitly provided in a tool call.
 
 Example mcp.json
 {
@@ -51,4 +53,4 @@ Notes
 - Ensure your EMPI service exposes OpenAPI JSON (with springdoc-openapi: GET /v3/api-docs).
 - Auto-discovery: If the first attempt to fetch OpenAPI fails, the server will try common context-paths like /api and /csi-api/empi-api/api. When a working URL is found, it will use that context for subsequent API calls.
 - If your Swagger UI is at a URL like http://localhost:3008/api/swagger-ui/index.html, your OpenAPI JSON is likely at http://localhost:3008/api/v3/api-docs (context-path=/api). You can either set CONTEXT_PATH=/api or rely on auto-discovery.
-- Endpoints requiring authorization are not handled explicitly in this minimal setup; add reverse proxy or extend fast_mcp_server.py to inject headers if needed.
+- Endpoints requiring authorization or tenancy headers: This server now supports injecting required headers like x-group and x-hospital. Set DEFAULT_X_GROUP (or X_GROUP) and/or DEFAULT_X_HOSPITAL (or X_HOSPITAL) in env to provide defaults. You can also pass explicit headers in a tool call argument as either "x-group"/"x_group" or "x-hospital"/"x_hospital" to override the defaults for that call.
