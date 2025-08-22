@@ -43,11 +43,26 @@ Running against the included demo FastAPI service
 Maintenance tool
 - The MCP server also exposes a maintenance tool: reload_openapi_spec, which re-fetches the OpenAPI and rebuilds the tool list.
 
-Requirements
+Installation
 - Python 3.9+
-- FastMCP library:
-  - pip install fastmcp
-  - Project page: search PyPI for "fastmcp" relevant to your environment
+- Create and use a virtual environment (recommended, avoids PEP 668 externally-managed-environment errors):
+  1. python3 -m venv .venv
+  2. source .venv/bin/activate
+  3. pip install -r requirements.txt
+
+Troubleshooting PEP 668 (externally managed environment)
+- If you see an error like "externally-managed-environment" when installing packages system-wide, you are on a distro-managed Python. Use a virtual environment as shown above.
+- If you intentionally want to install into the system Python (not recommended), you can run:
+  - pip install --break-system-packages -r requirements.txt
+
+Running
+- After activating the venv:
+  - python fast_mcp_server.py
+- To run the demo FastAPI server (optional):
+  - python fast_api_server.py
+
+Dependencies
+- Managed via requirements.txt (includes: mcp, aiohttp). Ensure your virtual environment is active when running scripts.
 
 Notes
 - Ensure your EMPI service exposes OpenAPI JSON (with springdoc-openapi: GET /v3/api-docs).

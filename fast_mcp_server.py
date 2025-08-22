@@ -1,9 +1,19 @@
 import asyncio
-import aiohttp
+try:
+    import aiohttp
+except ModuleNotFoundError:
+    import sys
+    print("Error: Missing dependency 'aiohttp'.\n\nPlease install the project requirements before running this script, for example:\n  pip install -r requirements.txt\n\nIf you are using a virtual environment, make sure it is activated.")
+    sys.exit(1)
 import json
-from mcp.server import Server
-from mcp.types import Tool, TextContent
-from mcp.server.stdio import stdio_server
+try:
+    from mcp.server import Server
+    from mcp.types import Tool, TextContent
+    from mcp.server.stdio import stdio_server
+except ModuleNotFoundError:
+    import sys
+    print("Error: Missing dependency 'mcp'.\n\nPlease install the project requirements before running this script, for example:\n  pip install -r requirements.txt\n\nIf you are using a virtual environment, make sure it is activated.")
+    sys.exit(1)
 from typing import Dict, List, Any, Optional
 
 # Configuration (override with environment variables)
