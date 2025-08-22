@@ -1,0 +1,1296 @@
+{
+  "summary": {
+    "total": 42,
+    "passed": 0,
+    "failed": 42,
+    "openapi_url": "http://localhost:3008/api/v3/api-docs"
+  },
+  "results": [
+    {
+      "operationId": "createBulkAccessRules",
+      "method": "POST",
+      "path": "/v1/groups/{groupId}/accessRules",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/groups/1/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/1/accessRules\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/groups/999999999/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/999999999/accessRules\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "createMergeRequest",
+      "method": "POST",
+      "path": "/v1/mergeRequests/",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/mergeRequests/",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/mergeRequests/\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "createOTPConfiguration",
+      "method": "POST",
+      "path": "/v1/otp/groups/{groupId}/configs",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/otp/groups/1/configs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/otp/groups/1/configs\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/otp/groups/999999999/configs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/otp/groups/999999999/configs\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "createPatient",
+      "method": "POST",
+      "path": "/v1/patients/",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/?isPatientFromVida3=True&isFromETL=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "createPatients",
+      "method": "POST",
+      "path": "/v1/patients/bulk",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/bulk?isFromETL=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/bulk\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "createRoleAccessRules",
+      "method": "POST",
+      "path": "/v1/groups/{groupId}/roles/{roleId}/accessRules",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/groups/1/roles/sample_roleId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/1/roles/sample_roleId/accessRules\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/groups/999999999/roles/sample_roleId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/999999999/roles/sample_roleId/accessRules\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "createUnknownDisasterPatient",
+      "method": "POST",
+      "path": "/v1/patients/unknown",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/unknown",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/unknown\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "createUserAccessRules",
+      "method": "POST",
+      "path": "/v1/groups/{groupId}/users/{userId}/accessRules",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/groups/1/users/sample_userId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/1/users/sample_userId/accessRules\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/groups/999999999/users/sample_userId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/999999999/users/sample_userId/accessRules\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "getAudit",
+      "method": "GET",
+      "path": "/v1/patients/{id}/audits/{revId}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 500,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/1/audits/0.0?revId=0.0",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_002001\",\"errorMessage\":\"Invalid Request Parameters!.\",\"additionalInformation\":\"Entity revision has to be greater than 0.\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: id"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 404,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/999999999/audits/999999999?revId=999999999",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_007001\",\"errorMessage\":\"Patient Not Found For Given ID.\",\"additionalInformation\":\"Audit record not found for patient with id: 999999999 at revision: 999999999\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 500; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getAuditTrails",
+      "method": "GET",
+      "path": "/v1/patients/{id}/audits",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/1/audits?detailed=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/1/audits\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: id"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/999999999/audits?detailed=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/999999999/audits\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 400"
+    },
+    {
+      "operationId": "getDefaultInsurance",
+      "method": "GET",
+      "path": "/v1/patients/insurance/default/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/insurance/default/sample_mrn",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/insurance/default/sample_mrn\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getInsuranceDetails",
+      "method": "GET",
+      "path": "/v1/patients/{mrn}/insurance",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/sample_mrn/insurance",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/sample_mrn/insurance\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getMergeDetails",
+      "method": "GET",
+      "path": "/v1/mergeRequests/mergeDetails/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/mergeRequests/mergeDetails/sample_mrn",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/mergeRequests/mergeDetails/sample_mrn\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getMergeDetailsOfPatients",
+      "method": "GET",
+      "path": "/v1/mergeRequests/mergeDetails/bulk",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/mergeRequests/mergeDetails/bulk?mrns=%5B%27sample_mrns_item%27%5D",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/mergeRequests/mergeDetails/bulk\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/mergeRequests/mergeDetails/bulk",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required parameter 'mrns' is not present.\",\"instance\":\"/api/v1/mergeRequests/mergeDetails/bulk\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400"
+    },
+    {
+      "operationId": "getOTPConfiguration",
+      "method": "GET",
+      "path": "/v1/otp/groups/{groupId}/configs",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/otp/groups/1/configs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_019000\",\"errorMessage\":\"OTP Config Not Found\",\"additionalInformation\":\"OTP configuration is not available for the given tenant\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/otp/groups/999999999/configs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_019000\",\"errorMessage\":\"OTP Config Not Found\",\"additionalInformation\":\"OTP configuration is not available for the given tenant\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 400"
+    },
+    {
+      "operationId": "getPatient",
+      "method": "GET",
+      "path": "/v1/patients/{patientId}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/1?detailed=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/1\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: patientId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/999999999?detailed=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/999999999\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 400"
+    },
+    {
+      "operationId": "getPatientCategory",
+      "method": "POST",
+      "path": "/v1/patients/patientCategory",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/patientCategory?userId=sample_userId",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/patientCategory\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/patientCategory",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/patientCategory\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got 415"
+    },
+    {
+      "operationId": "getPatientCompanyActiveStatus",
+      "method": "POST",
+      "path": "/v1/patients/insurance/active-status/{upi}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/insurance/active-status/sample_upi",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/insurance/active-status/sample_upi\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: upi"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getPatientOTPUsingPatientId",
+      "method": "GET",
+      "path": "/v1/otp/groups/{groupId}/patients/{patientId}/patientOTPs",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 200,
+          "ok": true,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/otp/groups/1/patients/1/patientOTPs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": ""
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 200,
+          "ok": true,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/otp/groups/999999999/patients/999999999/patientOTPs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": ""
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 200"
+    },
+    {
+      "operationId": "getPatientUsingMrn",
+      "method": "GET",
+      "path": "/v1/patients/mrn/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 500,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/mrn/sample_mrn?includeClosed=True&includeMerged=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_002001\",\"errorMessage\":\"Invalid Request Parameters!.\",\"additionalInformation\":\"Cannot invoke \\\"String.replaceAll(String, String)\\\" because \\\"headerValue\\\" is null\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 500; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getPatientsUsingFirstName",
+      "method": "GET",
+      "path": "/v1/patients/firstname/{firstName}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/firstname/sample_firstName",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/firstname/sample_firstName\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: firstName"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getPrimaryProfileOfMergedPatient",
+      "method": "GET",
+      "path": "/v1/mergeRequests/mergeDetails/primaryProfile/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/mergeRequests/mergeDetails/primaryProfile/sample_mrn",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/mergeRequests/mergeDetails/primaryProfile/sample_mrn\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getRequests",
+      "method": "GET",
+      "path": "/v1/mergeRequests/",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/mergeRequests/?pageNumber=0&pageSize=0&sortBy=sample_sortBy&sortOrder=sample_sortOrder",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_002001\",\"errorMessage\":\"Invalid Request Parameters!.\",\"additionalInformation\":\"Invalid Sorting Requirement!\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400"
+    },
+    {
+      "operationId": "getRoleAccessRules",
+      "method": "GET",
+      "path": "/v1/groups/{groupId}/roles/{roleId}/accessRules",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 200,
+          "ok": true,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/groups/1/roles/sample_roleId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "[]"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 200,
+          "ok": true,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/groups/999999999/roles/sample_roleId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "[]"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 200"
+    },
+    {
+      "operationId": "getUserAccessRules",
+      "method": "GET",
+      "path": "/v1/groups/{groupId}/users/{userId}/accessRules",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 200,
+          "ok": true,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/groups/1/users/sample_userId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "[]"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 200,
+          "ok": true,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/groups/999999999/users/sample_userId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "[]"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 200"
+    },
+    {
+      "operationId": "markPatientAsDeceased",
+      "method": "PUT",
+      "path": "/v1/patients/{by}/{value}/deceased",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/patients/sample_by/sample_value/deceased?isDeceased=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/sample_by/sample_value/deceased\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: by"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "mergeProfiles",
+      "method": "PUT",
+      "path": "/v1/mergeRequests/merge",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/mergeRequests/merge",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/mergeRequests/merge\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "notifyMergeInProgress",
+      "method": "PUT",
+      "path": "/v1/mergeRequests/Merge/notify/",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/mergeRequests/Merge/notify/?inProgress=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/mergeRequests/Merge/notify/\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/mergeRequests/Merge/notify/",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/mergeRequests/Merge/notify/\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got 415"
+    },
+    {
+      "operationId": "searchAccessRules",
+      "method": "POST",
+      "path": "/v1/accessRules/search",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/accessRules/search?pageNumber=0&pageSize=0",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/accessRules/search\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "searchMergeRequest",
+      "method": "POST",
+      "path": "/v1/mergeRequests/search",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/mergeRequests/search?pageNumber=0&pageSize=0",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/mergeRequests/search\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "searchPatients",
+      "method": "POST",
+      "path": "/v1/patients/search",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/search?pageNumber=0&pageSize=0&isDetailed=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-group' is not present.\",\"instance\":\"/api/v1/patients/search\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400"
+    },
+    {
+      "operationId": "sendOtpToPatient",
+      "method": "POST",
+      "path": "/v1/otp/groups/{groupId}/patients/{patientId}/sendOtp",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/otp/groups/1/patients/1/sendOtp",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-hospital' is not present.\",\"instance\":\"/api/v1/otp/groups/1/patients/1/sendOtp\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: patientId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/otp/groups/999999999/patients/999999999/sendOtp",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Required header 'x-hospital' is not present.\",\"instance\":\"/api/v1/otp/groups/999999999/patients/999999999/sendOtp\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 400"
+    },
+    {
+      "operationId": "softDeletePatients",
+      "method": "DELETE",
+      "path": "/v1/patients/delete",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 400,
+          "ok": false,
+          "request": {
+            "method": "DELETE",
+            "url": "http://localhost:3008/api/v1/patients/delete",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Bad Request\",\"status\":400,\"detail\":\"Failed to read request\",\"instance\":\"/api/v1/patients/delete\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 400"
+    },
+    {
+      "operationId": "updateMergeRequest",
+      "method": "PUT",
+      "path": "/v1/mergeRequests/{requestId}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/mergeRequests/1",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/mergeRequests/1\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: requestId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/mergeRequests/999999999",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/mergeRequests/999999999\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "updateOTPConfiguration",
+      "method": "PUT",
+      "path": "/v1/otp/groups/{groupId}/configs",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/otp/groups/1/configs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/otp/groups/1/configs\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/otp/groups/999999999/configs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/otp/groups/999999999/configs\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "updateOTPPatientUsingPatientId",
+      "method": "PUT",
+      "path": "/v1/otp/groups/{groupId}/patients/{patientId}/patientOTPs",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/otp/groups/1/patients/1/patientOTPs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/otp/groups/1/patients/1/patientOTPs\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/otp/groups/999999999/patients/999999999/patientOTPs",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/otp/groups/999999999/patients/999999999/patientOTPs\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "updatePatient",
+      "method": "PUT",
+      "path": "/v1/patients/{patientId}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/patients/1?isFieldsOnly=0&isPatientFromVida3=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/1\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: patientId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/patients/999999999?isFieldsOnly=0&isPatientFromVida3=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/999999999\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "updatePatientByMrn",
+      "method": "PUT",
+      "path": "/v1/patients/mrn/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/patients/mrn/sample_mrn?isFieldsOnly=0&isPatientFromVida3=True",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/mrn/sample_mrn\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "updateRoleAccessRules",
+      "method": "PUT",
+      "path": "/v1/groups/{groupId}/roles/{roleId}/accessRules",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/groups/1/roles/sample_roleId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/1/roles/sample_roleId/accessRules\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/groups/999999999/roles/sample_roleId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/999999999/roles/sample_roleId/accessRules\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "updateUserAccessRules",
+      "method": "PUT",
+      "path": "/v1/groups/{groupId}/users/{userId}/accessRules",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/groups/1/users/sample_userId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/1/users/sample_userId/accessRules\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/groups/999999999/users/sample_userId/accessRules",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/groups/999999999/users/sample_userId/accessRules\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None; negative_invalid_id expected different status, got 415"
+    },
+    {
+      "operationId": "validateMembership",
+      "method": "POST",
+      "path": "/v1/patients/validate/membership",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "POST",
+            "url": "http://localhost:3008/api/v1/patients/validate/membership",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/validate/membership\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415"
+    },
+    {
+      "operationId": "validateOTP",
+      "method": "GET",
+      "path": "/v1/otp/groups/{groupId}/patients/mrn/{mrn}/otpCode/{otpCode}/validate",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 404,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/otp/groups/1/patients/mrn/sample_mrn/otpCode/0/validate",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_000003\",\"errorMessage\":\"Patient Not Found For Given File Status.\",\"additionalInformation\":\"Patient not found for a given file status\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: groupId"
+        },
+        {
+          "label": "negative_invalid_id",
+          "status_code": 404,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/otp/groups/999999999/patients/mrn/sample_mrn/otpCode/999999999/validate",
+            "headers": {},
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_000003\",\"errorMessage\":\"Patient Not Found For Given File Status.\",\"additionalInformation\":\"Patient not found for a given file status\"}"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 404; negative_missing_required expected different status, got None"
+    }
+  ]
+}

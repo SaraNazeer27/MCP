@@ -1,0 +1,97 @@
+{
+  "summary": {
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "openapi_url": "http://localhost:3008/api/v3/api-docs"
+  },
+  "results": [
+    {
+      "operationId": "getMergeDetails",
+      "method": "GET",
+      "path": "/v1/mergeRequests/mergeDetails/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 200,
+          "ok": true,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/mergeRequests/mergeDetails/sample_mrn",
+            "headers": {
+              "x-group": "59",
+              "x-hospital": "58"
+            },
+            "body": null
+          },
+          "response_snippet": "{\"isMergeInProgress\":false,\"otherPatientMrn\":[]}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "getPatientUsingMrn",
+      "method": "GET",
+      "path": "/v1/patients/mrn/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 404,
+          "ok": false,
+          "request": {
+            "method": "GET",
+            "url": "http://localhost:3008/api/v1/patients/mrn/sample_mrn?includeClosed=True&includeMerged=True",
+            "headers": {
+              "x-group": "59",
+              "x-hospital": "58"
+            },
+            "body": null
+          },
+          "response_snippet": "{\"errorCode\":\"EMPI_000003\",\"errorMessage\":\"Patient Not Found For Given File Status.\",\"additionalInformation\":\"Patient not found for a given file status\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 404; negative_missing_required expected different status, got None"
+    },
+    {
+      "operationId": "updatePatientByMrn",
+      "method": "PUT",
+      "path": "/v1/patients/mrn/{mrn}",
+      "scenarios": [
+        {
+          "label": "happy_path",
+          "status_code": 415,
+          "ok": false,
+          "request": {
+            "method": "PUT",
+            "url": "http://localhost:3008/api/v1/patients/mrn/sample_mrn?isFieldsOnly=0&isPatientFromVida3=True",
+            "headers": {
+              "x-group": "59",
+              "x-hospital": "58"
+            },
+            "body": null
+          },
+          "response_snippet": "{\"type\":\"about:blank\",\"title\":\"Unsupported Media Type\",\"status\":415,\"detail\":\"Content-Type 'application/octet-stream;charset=UTF-8' is not supported.\",\"instance\":\"/api/v1/patients/mrn/sample_mrn\"}"
+        },
+        {
+          "label": "negative_missing_required",
+          "status": "error",
+          "error": "build_request_error: Missing required path parameter: mrn"
+        }
+      ],
+      "overall": "FAIL",
+      "reason": "happy_path expected different status, got 415; negative_missing_required expected different status, got None"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import json
 from mcp.server import Server
 from mcp.types import Tool, TextContent
 from mcp.server.stdio import stdio_server
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 # Configuration (override with environment variables)
 import os
@@ -16,19 +16,32 @@ OPENAPI_FULL_URL = os.getenv("OPENAPI_FULL_URL", "")
 OPENAPI_PATH = os.getenv("OPENAPI_PATH", "/v3/api-docs")
 SERVER_NAME = os.getenv("SERVER_NAME", "fast_mcp_server")
 # Optional default group header value for downstream APIs that require x-group
-DEFAULT_X_GROUP = os.getenv("DEFAULT_X_GROUP", os.getenv("X_GROUP", ""))
+# Do not hardcode a numeric default; use environment only, else leave unset to force user input via tools
+DEFAULT_X_GROUP = (os.getenv("DEFAULT_X_GROUP") or os.getenv("X_GROUP") or "").strip() or None
 # Optional default hospital header value for downstream APIs that require x-hospital
-DEFAULT_X_HOSPITAL = os.getenv("DEFAULT_X_HOSPITAL", os.getenv("X_HOSPITAL", ""))
+# Do not hardcode a numeric default; use environment only, else leave unset to force user input via tools
+DEFAULT_X_HOSPITAL = (os.getenv("DEFAULT_X_HOSPITAL") or os.getenv("X_HOSPITAL") or "").strip() or None
 # Runtime-resolved context path (may be auto-detected). Defaults to CONTEXT_PATH
 CONTEXT_PATH_RUNTIME = CONTEXT_PATH
 # Resolved OpenAPI URL after successful fetch (for logging)
 RESOLVED_OPENAPI_URL = ""
 
+# Auto test configuration
+AUTO_RUN_EMPI_TESTS = (os.getenv("AUTO_RUN_EMPI_TESTS", "1").strip().lower() in {"1", "true", "yes", "on"})
+try:
+    AUTO_TEST_CONCURRENCY = int(os.getenv("AUTO_TEST_CONCURRENCY", "5"))
+except Exception:
+    AUTO_TEST_CONCURRENCY = 5
+AUTO_TEST_FILTER = (os.getenv("AUTO_TEST_FILTER", "").strip() or None)
+AUTO_TEST_REPORT = os.getenv("AUTO_TEST_REPORT", os.path.join(os.getcwd(), "empi_test_report.json"))
+
 # Create MCP server
 server = Server(SERVER_NAME)
 
+# Runtime user-provided header overrides (set through MCP tools)
+USER_X_GROUP: Optional[str] = None
+USER_X_HOSPITAL: Optional[str] = None
 
-from typing import Optional
 
 async def make_api_request(method: str, endpoint: str, data: dict = None, headers: Optional[Dict[str, str]] = None) -> dict:
     """Make HTTP request to the configured API base URL"""
@@ -261,12 +274,17 @@ def build_request_from_operation(method, path, details, arguments):
             if provided_key is not None:
                 headers[pname] = str(arguments[provided_key])
             else:
-                # Inject default for x-group if configured
-                if lname == "x-group" and DEFAULT_X_GROUP:
-                    headers[pname] = DEFAULT_X_GROUP
-                # Inject default for x-hospital if configured
-                if lname == "x-hospital" and DEFAULT_X_HOSPITAL:
-                    headers[pname] = DEFAULT_X_HOSPITAL
+                # Inject from user override first, then default env values
+                if lname == "x-group":
+                    if USER_X_GROUP:
+                        headers[pname] = USER_X_GROUP
+                    elif DEFAULT_X_GROUP:
+                        headers[pname] = DEFAULT_X_GROUP
+                if lname == "x-hospital":
+                    if USER_X_HOSPITAL:
+                        headers[pname] = USER_X_HOSPITAL
+                    elif DEFAULT_X_HOSPITAL:
+                        headers[pname] = DEFAULT_X_HOSPITAL
                 # Otherwise, leave it out; backend may apply its own default
     # Body
     body = None
@@ -290,22 +308,191 @@ async def list_tools() -> List[Tool]:
         err_msg = openapi_spec_cache["error"] if openapi_spec_cache and isinstance(openapi_spec_cache, dict) and "error" in openapi_spec_cache else "Unknown error"
         return [Tool(name="error", description=f"Failed to fetch OpenAPI: {err_msg}", inputSchema={"type": "object", "properties": {}})]
     tools = openapi_to_tools(openapi_spec_cache)
-    # Add a maintenance tool to reload OpenAPI spec
-    tools.append(Tool(name="reload_openapi_spec", description="Reload the OpenAPI specification from the configured server", inputSchema={"type": "object", "properties": {}}))
+    # Add maintenance and configuration tools
+    tools.append(Tool(
+        name="reload_openapi_spec",
+        description="Reload the OpenAPI specification from the configured server",
+        inputSchema={"type": "object", "properties": {}}
+    ))
+    tools.append(Tool(
+        name="set_x_group",
+        description="Set the x-group header value to use for downstream API requests (overrides environment default).",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "x_group": {"type": "string", "description": "The x-group value. Accepts digits or string."}
+            },
+            "required": ["x_group"]
+        }
+    ))
+    tools.append(Tool(
+        name="set_x_hospital",
+        description="Set the x-hospital header value to use for downstream API requests (overrides environment default).",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "x_hospital": {"type": "string", "description": "The x-hospital value. Accepts digits or string."}
+            },
+            "required": ["x_hospital"]
+        }
+    ))
+    tools.append(Tool(
+        name="show_header_context",
+        description="Show current x-group/x-hospital values in use (user override vs defaults).",
+        inputSchema={"type": "object", "properties": {}}
+    ))
+    tools.append(Tool(
+        name="clear_header_context",
+        description="Clear user-provided x-group and x-hospital overrides (revert to defaults).",
+        inputSchema={"type": "object", "properties": {}}
+    ))
+    tools.append(Tool(
+        name="run_empi_tests",
+        description=(
+            "Run the auto-generated integration tests against the current OpenAPI service. "
+            "Options: set concurrency, filter operations, override x-group/x-hospital, and choose a report path."
+        ),
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "concurrency": {"type": "integer", "description": "Number of concurrent requests (default 5)"},
+                "filter": {"type": "string", "description": "Filter operations by text (operationId/summary)"},
+                "report": {"type": "string", "description": "Path to save JSON report (default empi_test_report.json)"},
+                "x_group": {"type": "string", "description": "x-group header override"},
+                "x_hospital": {"type": "string", "description": "x-hospital header override"}
+            }
+        }
+    ))
     return tools
+
+
+async def _execute_empi_tests(concurrency: Optional[int] = None,
+                              filter_text: Optional[str] = None,
+                              report_path: Optional[str] = None,
+                              x_group: Optional[str] = None,
+                              x_hospital: Optional[str] = None,
+                              background_label: Optional[str] = None) -> str:
+    """Execute the integration test script as a subprocess and return combined output text.
+    Uses USER_X_GROUP/USER_X_HOSPITAL overrides if provided, otherwise defaults.
+    """
+    import sys
+    from asyncio.subprocess import PIPE, create_subprocess_exec
+
+    script_path = os.path.join(os.path.dirname(__file__), "test_empi_endpoints.py")
+    if not os.path.exists(script_path):
+        return f"Test script not found at {script_path}"
+
+    conc_val = str(concurrency if concurrency is not None else AUTO_TEST_CONCURRENCY)
+    report_val = report_path or AUTO_TEST_REPORT
+
+    cmd = [sys.executable or "python", script_path, "--concurrency", conc_val, "--report", report_val]
+    if filter_text:
+        cmd += ["--filter", str(filter_text)]
+
+    # Prefer user overrides if already set via tools; otherwise use provided args or env defaults
+    xg = (x_group if x_group is not None else (USER_X_GROUP or DEFAULT_X_GROUP))
+    xh = (x_hospital if x_hospital is not None else (USER_X_HOSPITAL or DEFAULT_X_HOSPITAL))
+    if xg:
+        cmd += ["--x-group", str(xg)]
+    if xh:
+        cmd += ["--x-hospital", str(xh)]
+
+    try:
+        proc = await create_subprocess_exec(*cmd, stdout=PIPE, stderr=PIPE, env=os.environ.copy())
+        stdout_b, stderr_b = await proc.communicate()
+        out = stdout_b.decode("utf-8", errors="replace")
+        err = stderr_b.decode("utf-8", errors="replace")
+        header_lines = []
+        if background_label:
+            header_lines.append(f"[auto:{background_label}] EMPI tests started...")
+        header_lines.append(f"Command: {' '.join(cmd)}")
+        header_lines.append(f"Exit code: {proc.returncode}")
+        header_lines.append(f"Report: {report_val}")
+        header = "\n".join(header_lines) + "\n\n"
+        text = header + out
+        if err.strip():
+            text += "\n[stderr]\n" + err
+        if len(text) > 12000:
+            text = text[:12000] + "\n... (truncated)"
+        return text
+    except Exception as e:
+        return f"Failed to run tests: {str(e)}"
+
+
+async def _auto_run_and_print(label: str):
+    """Run tests in background and print the result to stdout when done."""
+    try:
+        print(f"[auto:{label}] Launching integration tests (this runs in background)...")
+        # Apply AUTO_TEST_FILTER if provided via environment
+        text = await _execute_empi_tests(filter_text=AUTO_TEST_FILTER, background_label=label)
+        print(text)
+    except Exception as e:
+        print(f"[auto:{label}] Failed to run auto tests: {e}")
 
 
 @server.call_tool()
 async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
     try:
+        global USER_X_GROUP, USER_X_HOSPITAL, openapi_spec_cache, operation_map
+        # Config tools that do not require OpenAPI
+        if name == "set_x_group":
+            # Accept x_group or x-group
+            raw = arguments.get("x_group")
+            if raw is None:
+                raw = arguments.get("x-group")
+            if raw is None:
+                return [TextContent(type="text", text="Missing required argument: x_group")]
+            value = str(raw).strip()
+            if not value:
+                return [TextContent(type="text", text="x_group cannot be empty.")]
+            USER_X_GROUP = value
+            return [TextContent(type="text", text=f"x-group set to: {USER_X_GROUP}")]
+        if name == "set_x_hospital":
+            raw = arguments.get("x_hospital")
+            if raw is None:
+                raw = arguments.get("x-hospital")
+            if raw is None:
+                return [TextContent(type="text", text="Missing required argument: x_hospital")]
+            value = str(raw).strip()
+            if not value:
+                return [TextContent(type="text", text="x_hospital cannot be empty.")]
+            USER_X_HOSPITAL = value
+            return [TextContent(type="text", text=f"x-hospital set to: {USER_X_HOSPITAL}")]
+        if name == "show_header_context":
+            resolved_group = USER_X_GROUP or DEFAULT_X_GROUP or "<unset>"
+            resolved_hospital = USER_X_HOSPITAL or DEFAULT_X_HOSPITAL or "<unset>"
+            msg = (
+                "Header context:\n"
+                f"  x-group: current={'user:' + USER_X_GROUP if USER_X_GROUP else 'default:' + (DEFAULT_X_GROUP or '<unset>')} (resolved={resolved_group})\n"
+                f"  x-hospital: current={'user:' + USER_X_HOSPITAL if USER_X_HOSPITAL else 'default:' + (DEFAULT_X_HOSPITAL or '<unset>')} (resolved={resolved_hospital})\n"
+            )
+            return [TextContent(type="text", text=msg)]
+        if name == "clear_header_context":
+            USER_X_GROUP = None
+            USER_X_HOSPITAL = None
+            return [TextContent(type="text", text="Cleared user-provided x-group and x-hospital. Defaults will be used.")]
         if name == "reload_openapi_spec":
-            global openapi_spec_cache, operation_map
             openapi_spec_cache = None
             operation_map = None
             await ensure_openapi_loaded()
             if not openapi_spec_cache or "error" in openapi_spec_cache:
                 return [TextContent(type="text", text=f"Failed to reload OpenAPI: {openapi_spec_cache['error'] if openapi_spec_cache else 'Unknown error'}")]
+            # Optionally auto-run tests after reload
+            if AUTO_RUN_EMPI_TESTS:
+                asyncio.create_task(_auto_run_and_print("reload"))
+                return [TextContent(type="text", text="OpenAPI spec reloaded successfully. Auto-running integration tests in background...")]
             return [TextContent(type="text", text="OpenAPI spec reloaded successfully.")]
+        if name == "run_empi_tests":
+            # Run the standalone test script as a subprocess and return its output
+            text = await _execute_empi_tests(
+                concurrency=arguments.get("concurrency"),
+                filter_text=arguments.get("filter"),
+                report_path=arguments.get("report"),
+                x_group=arguments.get("x_group") or arguments.get("x-group"),
+                x_hospital=arguments.get("x_hospital") or arguments.get("x-hospital")
+            )
+            return [TextContent(type="text", text=text)]
+        # Operation tools (require OpenAPI)
         await ensure_openapi_loaded()
         if not operation_map or name not in operation_map:
             return [TextContent(type="text", text=f"Unknown tool: {name}")]
@@ -314,12 +501,29 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
             http_method, endpoint, body, headers = build_request_from_operation(method, path, details, arguments)
         except Exception as e:
             return [TextContent(type="text", text=f"Error building request: {str(e)}")]
-        # Ensure x-group default header is applied if not already set by operation headers
-        if DEFAULT_X_GROUP and ("x-group" not in headers and "X-Group" not in headers):
-            headers["x-group"] = DEFAULT_X_GROUP
-        # Ensure x-hospital default header is applied if not already set by operation headers
-        if DEFAULT_X_HOSPITAL and ("x-hospital" not in headers and "X-Hospital" not in headers):
-            headers["x-hospital"] = DEFAULT_X_HOSPITAL
+        # Ensure x-group header is applied if not already set by operation headers
+        if ("x-group" not in headers and "X-Group" not in headers):
+            if USER_X_GROUP:
+                headers["x-group"] = USER_X_GROUP
+            elif DEFAULT_X_GROUP:
+                headers["x-group"] = DEFAULT_X_GROUP
+        # Ensure x-hospital header is applied if not already set by operation headers
+        if ("x-hospital" not in headers and "X-Hospital" not in headers):
+            if USER_X_HOSPITAL:
+                headers["x-hospital"] = USER_X_HOSPITAL
+            elif DEFAULT_X_HOSPITAL:
+                headers["x-hospital"] = DEFAULT_X_HOSPITAL
+        # If still missing, ask the agent to collect them from the user via the provided tools
+        missing_prompts = []
+        if ("x-group" not in headers and "X-Group" not in headers):
+            missing_prompts.append("x-group (call set_x_group with { x_group: <value> })")
+        if ("x-hospital" not in headers and "X-Hospital" not in headers):
+            missing_prompts.append("x-hospital (call set_x_hospital with { x_hospital: <value> })")
+        if missing_prompts:
+            return [TextContent(type="text", text=(
+                "Missing required header(s): " + ", ".join(missing_prompts) +
+                "\nPlease ask the user for these values and set them using the corresponding tools, then re-run the operation."
+            ))]
         result = await make_api_request(http_method, endpoint, body, headers)
         if "error" in result:
             return [TextContent(type="text", text=f"Error: {result['error']}")]
@@ -338,6 +542,9 @@ async def main():
         display_url = RESOLVED_OPENAPI_URL or (OPENAPI_FULL_URL.strip() or f"{API_BASE_URL.rstrip('/')}/{(CONTEXT_PATH.strip('/').strip() + '/' if CONTEXT_PATH.strip('/') else '')}{OPENAPI_PATH.strip('/')}" )
         if isinstance(spec, dict) and ("openapi" in spec or ("swagger" in spec)):
             print(f"✅ Connected. OpenAPI loaded from {display_url}")
+            # Auto-run integration tests on startup if enabled
+            if AUTO_RUN_EMPI_TESTS:
+                asyncio.create_task(_auto_run_and_print("startup"))
         else:
             print(f"⚠️ Received unexpected OpenAPI response from {display_url}: {str(spec)[:200]}")
     except Exception as e:
